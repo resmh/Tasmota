@@ -3823,4 +3823,12 @@ void HandleEmbedQREngine(void) {
 }
 #endif
 
+void WSModuleSend() {
+  WSContentSend_P(PSTR("<script type='module'>"));
+#ifdef USE_EMBEDQR
+  WSContentSend_P(EMBEDQR_BOOTSTRAP, PSTR(D_EMBEDQR_SCANI), PSTR(D_EMBEDQR_SCANF), PSTR(D_EMBEDQR_LOADF), PSTR(D_EMBEDQR_READY), PSTR(D_EMBEDQR_LOAD), PSTR(D_EMBEDQR_SCAN), PSTR(D_EMBEDQR_SCANS));
+#endif
+  WSContentSend_P(PSTR("</script>"));
+}
+
 #endif  // USE_WEBSERVER
