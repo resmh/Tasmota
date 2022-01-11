@@ -465,6 +465,11 @@ struct WEB {
   bool upload_services_stopped = false;
   bool reset_web_log_flag = false;                  // Reset web console log
   bool initial_config = false;
+#ifndef NO_CAPTIVE_PORTAL
+#ifdef CAPTIVE_PORTAL_COEXISTENCE
+  uint8_t capstate = 0;
+#endif
+#endif
 } Web;
 
 // Helper function to avoid code duplication (saves 4k Flash)
