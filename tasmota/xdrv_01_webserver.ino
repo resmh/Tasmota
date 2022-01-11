@@ -875,6 +875,10 @@ void WSContentSendStyle_P(const char* formatP, ...) {
   }
   WSContentSend_P(HTTP_HEAD_LAST_SCRIPT);
 
+#ifdef USE_JAVASCRIPT_ES6  
+  WSModuleSend();
+#endif
+
   WSContentSend_P(HTTP_HEAD_STYLE1, WebColor(COL_FORM), WebColor(COL_INPUT), WebColor(COL_INPUT_TEXT), WebColor(COL_INPUT),
                   WebColor(COL_INPUT_TEXT), WebColor(COL_CONSOLE), WebColor(COL_CONSOLE_TEXT), WebColor(COL_BACKGROUND));
   WSContentSend_P(HTTP_HEAD_STYLE2, WebColor(COL_BUTTON), WebColor(COL_BUTTON_TEXT), WebColor(COL_BUTTON_HOVER),
