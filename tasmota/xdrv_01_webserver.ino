@@ -3586,4 +3586,29 @@ bool Xdrv01(uint8_t function)
   }
   return result;
 }
+
+#ifdef USE_JAVASCRIPT_ES6
+#ifdef USE_EMBEDQR
+void HandleEmbedQRControl(void) {
+  Webserver->client().flush();
+  WSHeaderSend();
+  Webserver->sendHeader(F("Content-Encoding"), F("gzip")); yield();
+  Webserver->send_P(200, "text/javascript", EMBEDQR, EMBEDQR_SIZE); yield();
+  WSContentEnd(); yield();
+}
+#endif
+#endif
+
+#ifdef USE_JAVASCRIPT_ES6
+#ifdef USE_EMBEDQR
+void HandleEmbedQREngine(void) {
+  Webserver->client().flush();
+  WSHeaderSend();
+  Webserver->sendHeader(F("Content-Encoding"), F("gzip")); yield();
+  Webserver->send_P(200, "text/javascript", EMBEDQR_ENGINE, EMBEDQR_ENGINE_SIZE); yield();
+  WSContentEnd(); yield();
+}
+#endif
+#endif
+
 #endif  // USE_WEBSERVER
