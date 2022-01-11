@@ -567,6 +567,12 @@ const WebServerDispatch_t WebServerDispatch[] PROGMEM = {
   { "rs", HTTP_ANY, HandleRestoreConfiguration },
   { "rt", HTTP_ANY, HandleResetConfiguration },
   { "in", HTTP_ANY, HandleInformation },
+#ifdef USE_JAVASCRIPT_ES6
+#ifdef USE_EMBEDQR
+  { "qc", HTTP_GET, HandleEmbedQRControl },
+  { "qr", HTTP_GET, HandleEmbedQREngine },
+#endif
+#endif
 #endif  // Not FIRMWARE_MINIMAL
 };
 
