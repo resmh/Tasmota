@@ -461,6 +461,11 @@ struct WEB {
   uint16_t save_data_counter = 0;
   uint8_t old_wificonfig = MAX_WIFI_OPTION; // means "nothing yet saved here"
   bool wifi_test_AP_TIMEOUT = false;
+#ifndef NO_CAPTIVE_PORTAL
+#ifdef CAPTIVE_PORTAL_COEXISTENCE
+  uint8_t capstate = 0;
+#endif
+#endif
 } Web;
 
 // Helper function to avoid code duplication (saves 4k Flash)
