@@ -72,8 +72,9 @@ for file in files:
   line_number = 0
   for line in text_list:
     pos = line.find("const char")
+    posb = line.find("[] PROGMEM =")
     # print(pos, line)
-    if pos > -1:
+    if pos > -1 and posb > -1:
       line_list = line.rsplit(" ")
       for el in line_list:
         if el.find('[]') > -1:
