@@ -3063,6 +3063,7 @@ void HandleNotFound(void)
 }
 
 #ifndef NO_CAPTIVE_PORTAL
+#ifndef CAPTIVE_PORTAL_COEXISTENCE
 /* Redirect to captive portal if we got a request for another domain. Return true in that case so the page handler do not try to handle the request again. */
 bool CaptivePortal(void)
 {
@@ -3077,6 +3078,44 @@ bool CaptivePortal(void)
   }
   return false;
 }
+ #else
+/* Captive Portal Coexistence (CAPCOEX): Modification allowing Captive Portal to coexist with QR-Codes as a means to access setup page
+ * (In other words: Don't let Captive Portal Agent interrupt users while scanning qr-codes) */
+bool CaptivePortal(void)
+{
+  if (!WifiIsInManagerMode()) { return false; }
+  bool _valid = ValidIpAddress(Webserver->hostHeader().c_str());
+  if (!_valid) {
+    if (Web.capstate == 2) { CaptivePortalBlock(); return true; }
+    if (Web.capstate == 0) { delay(5000); }
+	CaptivePortalRespond(false);
+    return true;
+  } else if (_valid && Web.capstate == 0) {
+	AddLog(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CAP_DISABLED));
+	Web.capstate = 2;
+  }
+  return false;
+}
+void HandleCaptivePortalConfirm(void) {
+  if (Web.capstate == 2) { CaptivePortalBlock(); return; }
+  AddLog(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CAP_ENABLED));
+  Web.capstate = 1;
+  CaptivePortalRespond(true);
+}
+void CaptivePortalBlock(void) {
+  AddLog(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CAP_BLOCKED));
+  WSSend(500, CT_PLAIN, "");
+  Webserver->client().stop();
+}
+void CaptivePortalRespond(bool second) {
+  AddLog(LOG_LEVEL_DEBUG, PSTR(D_LOG_HTTP D_CAP_REDIRECT));
+  String _target = String(F("http://")) + Webserver->client().localIP().toString();
+  if (!second) { _target += "/po"; }
+  Webserver->sendHeader(F("Location"), _target, true);
+  WSSend(302, CT_PLAIN, "");
+  Webserver->client().stop();
+}
+#endif
 #endif  // NO_CAPTIVE_PORTAL
 
 /*********************************************************************************************/
