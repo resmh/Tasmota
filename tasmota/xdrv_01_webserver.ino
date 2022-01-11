@@ -3617,4 +3617,16 @@ void HandleEmbedQREngine(void) {
 #endif
 #endif
 
+#ifdef USE_JAVASCRIPT_ES6
+void WSModuleSend() {
+  WSContentSend_P(PSTR("<script type='module'>"));
+#ifdef USE_EMBEDQR
+  if ( WifiIsInManagerMode() ) {
+    WSContentSend_P(EMBEDQR_BOOTSTRAP, PSTR(D_EMBEDQR_SCANI), PSTR(D_EMBEDQR_SCANF), PSTR(D_EMBEDQR_LOADF), PSTR(D_EMBEDQR_READY), PSTR(D_EMBEDQR_LOAD), PSTR(D_EMBEDQR_SCAN), PSTR(D_EMBEDQR_SCANS));
+  }
+#endif
+  WSContentSend_P(PSTR("</script>"));
+}
+#endif
+
 #endif  // USE_WEBSERVER
