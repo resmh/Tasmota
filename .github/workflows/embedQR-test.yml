@@ -1,0 +1,70 @@
+name: development-embedQR-CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the development branch
+  push:
+    branches: [ development-embedQR-t ]
+  pull_request:
+    branches: [ development-embedQR-t ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  tasmota-thermostat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tasmota/development-embedQR-t
+        uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+      - name: Install dependencies
+        run: |
+          pip install -U platformio
+
+      - name: Build Tasmota with QR and Thermostat settings
+        run: platformio run -e tasmota
+
+      - name: Move firmware files
+        run: |
+          mv .pio/build/tasmota/firmware.bin ./tasmota.bin
+          mv .pio/build/tasmota/firmware.elf ./tasmota.elf
+
+      - name: Build Tasmota32 with QR and Thermostat settings
+        run: platformio run -e tasmota32
+
+      - name: Move firmware files
+        run: |
+          cp .pio/build/tasmota32/firmware.bin ./tasmota32.bin
+          cp .pio/build/tasmota32/firmware.elf ./tasmota32.elf
+          cp .pio/build/tasmota32/firmware.factory.bin ./tasmota32.factory.bin
+          cp $HOME/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/bin/bootloader_dio_40m.bin ./tasmota32.bootloader_dio_40m.bin
+          cp .pio/build/tasmota32/partitions.bin ./tasmota32.partitions.bin
+          cp $HOME/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin ./tasmota32.boot_app0.bin
+          cp $HOME/.platformio/packages/framework-arduinoespressif32/variants/tasmota/tasmota32-safeboot.bin ./tasmota32.safeboot.bin
+          
+
+      - name: Upload firmware files as release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Automated Release"
+          files: |
+            tasmota.bin
+            tasmota.elf
+            tasmota32.bin
+            tasmota32.elf
+            tasmota32.factory.bin
+            tasmota32.bootloader_dio_40m.bin
+            tasmota32.partitions.bin
+            tasmota32.boot_app0.bin
+            tasmota32.safeboot.bin
+            FLASH.md
