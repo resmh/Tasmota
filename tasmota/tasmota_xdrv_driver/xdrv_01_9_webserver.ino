@@ -577,6 +577,11 @@ const WebServerDispatch_t WebServerDispatch[] PROGMEM = {
   { "qc", HTTP_GET, HandleEmbedQRControl },
   { "qr", HTTP_GET, HandleEmbedQREngine },
 #endif
+#ifndef NO_CAPTIVE_PORTAL
+#ifdef CAPTIVE_PORTAL_COEXISTENCE
+  { "po", HTTP_GET, HandleCaptivePortalConfirm },
+#endif
+#endif
 #endif  // Not FIRMWARE_MINIMAL
 #ifndef FIRMWARE_MINIMAL_ONLY
   { "in", HTTP_ANY, HandleInformation },
